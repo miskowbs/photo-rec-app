@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "988908571258",
+    "firebase_url": "https://miskowbs-photo-recommendations.firebaseio.com",
+    "project_id": "miskowbs-photo-recommendations",
+    "storage_bucket": "miskowbs-photo-recommendations.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988908571258:android:bb1c668c4c52024c",
+        "android_client_info": {
+          "package_name": "edu.rose_hulman.miskowbs.photorecommendationapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988908571258-1rm9pbv9ak1e08kesu0ii0gprt8qgc4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeOQheAFItG-lJD16jLT6NL7XPkAU4e3o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

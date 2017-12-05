@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Photo Recommendation App</string>
+    <string name="login_error">Login Error!</string>
 </resources>
