@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Photo Recommendation App</string>
     <string name="login_error">Login Error!</string>
+    <string name="action_take_image">Take_photo</string>
+    <string name="action_photo_gallery">Pick from gallery</string>
+    <string name="action_logout">Logout</string>
 </resources>

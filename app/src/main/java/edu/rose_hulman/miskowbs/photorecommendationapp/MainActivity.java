@@ -2,6 +2,7 @@ package edu.rose_hulman.miskowbs.photorecommendationapp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements
                     //TODO: Implement this
                     //SwitchToLandingFragment();
                 } else {
-                    //TODO: Implement this
-                    //switchToLoginFragment();
+                    switchToLoginFragment();
                 }
             }
         };
@@ -64,6 +64,12 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         };
+    }
+
+    private void switchToLoginFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment, new LoginFragment(), "Login");
+        ft.commit();
     }
 
     private void initializeGoogle() {
