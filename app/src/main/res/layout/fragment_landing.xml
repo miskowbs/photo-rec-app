@@ -24,13 +24,15 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar">
 
-            <android.support.v7.widget.RecyclerView
+            <GridView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/picture_list"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent"
+                android:columnWidth="@dimen/column_width"
+                android:numColumns="auto_fit"
+                android:verticalSpacing="@dimen/vertical_spacing"
+                android:horizontalSpacing="@dimen/horizontal_spacing"
+                android:stretchMode="columnWidth"
+                android:gravity="center"/>
         </FrameLayout>
     </RelativeLayout>
 
