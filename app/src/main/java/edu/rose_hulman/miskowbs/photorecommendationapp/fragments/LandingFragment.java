@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,21 @@ public class LandingFragment extends Fragment
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.action_logout:
+                Log.d("PK", "LOGOUT Menu Item Clicked!");
+                mListener.onLogout();
+                return true;
+            case R.id.action_take_image:
+                //TODO: Launch camera Intent
+                //TODO: get tags based on taken photo
+                return true;
+            case R.id.action_photo_gallery:
+                //TODO: Launch gallery intent
+                //TODO: get tags based on photos
+                return true;
+        }
         return false;
     }
 
