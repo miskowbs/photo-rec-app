@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 
+
 /**
  * Created by miskowbs on 12/10/2017.
  */
@@ -40,9 +41,8 @@ public class LandingFragment extends Fragment
         //Note path isn't finalized yet
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_landing, container, false);
         Toolbar mToolbar = rootView.findViewById(R.id.toolbar);
         mToolbar.setTitle("Photo Recommendations");

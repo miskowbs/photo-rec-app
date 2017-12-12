@@ -36,18 +36,18 @@
         </FrameLayout>
     </RelativeLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <!--<android.support.design.widget.FloatingActionButton-->
 
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right|end"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_action_add"
-        app:backgroundTint="@color/primary"
-        app:elevation="4dp" />
-    <!-- Not sure if I want to use this or just use a menu option -->
+        <!--android:id="@+id/fab_add"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right|end"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:clickable="true"-->
+        <!--android:src="@drawable/ic_action_add"-->
+        <!--app:backgroundTint="@color/primary"-->
+        <!--app:elevation="4dp" />-->
+    <!--&lt;!&ndash; Not sure if I want to use this or just use a menu option &ndash;&gt;-->
 
 </android.support.design.widget.CoordinatorLayout>

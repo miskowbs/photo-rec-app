@@ -2,6 +2,7 @@ package edu.rose_hulman.miskowbs.photorecommendationapp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,10 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LandingFragment;
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LoginFragment;
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.OnLoginListener, GoogleApiClient.OnConnectionFailedListener{
+        LoginFragment.OnLoginListener, GoogleApiClient.OnConnectionFailedListener,
+        LandingFragment.OnLogoutListener{
 
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
@@ -48,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 Log.d("TAG", "User: " + user);
                 if (user != null) {
-                    //TODO: Implement this
-                    //SwitchToLandingFragment();
+                    switchToLandingFragment();
                 } else {
                     switchToLoginFragment();
                 }
@@ -64,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         };
+    }
+
+    private void switchToLandingFragment() {
+        FragmentTransaction ft  = getSupportFragmentManager().beginTransaction();
+        Fragment landingFragment = new LandingFragment();
+        ft.replace(R.id.fragment, landingFragment, "Landing");
+        ft.commit();
     }
 
     private void switchToLoginFragment() {
@@ -139,5 +148,8 @@ public class MainActivity extends AppCompatActivity implements
         showLoginError("Google connection failed!");
     }
 
-    //TODO: add onLogout listener after landingFragment is created
+    @Override
+    public void onLogout() {
+        mAuth.signOut();
+    }
 }
