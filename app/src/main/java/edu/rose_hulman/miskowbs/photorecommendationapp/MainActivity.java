@@ -1,6 +1,7 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp;
 
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,9 +27,12 @@ import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LoginFragment;
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.OnLoginListener, GoogleApiClient.OnConnectionFailedListener,
-        LandingFragment.OnLogoutListener{
+        LandingFragment.OnLogoutListener, LandingFragment.OnIntentsListener {
 
     private static final int RC_SIGN_IN = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_GALLERY_CAPTURE = 3;
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private OnCompleteListener mOnCompleteListener;
@@ -97,15 +101,23 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+        switch (requestCode) {
+            case RC_SIGN_IN:
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-            if (result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                showLoginError("Google sign in failed!");
-            }
+                if (result.isSuccess()) {
+                    GoogleSignInAccount account = result.getSignInAccount();
+                    firebaseAuthWithGoogle(account);
+                } else {
+                    showLoginError("Google sign in failed!");
+                }
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                //TODO: LandingFragment Redo based on Image tags
+                break;
+            case REQUEST_GALLERY_CAPTURE:
+                //TODO: LandingFragment Redo based on Image tags
+                break;
         }
     }
 
@@ -151,5 +163,23 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLogout() {
         mAuth.signOut();
+    }
+
+    @Override
+    public void takePhotoIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    public void getGalleryPicsIntent() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Pictures"),
+                REQUEST_GALLERY_CAPTURE);
     }
 }

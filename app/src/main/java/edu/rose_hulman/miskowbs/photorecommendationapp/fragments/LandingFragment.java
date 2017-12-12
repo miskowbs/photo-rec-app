@@ -1,7 +1,9 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -25,8 +27,12 @@ import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 public class LandingFragment extends Fragment
         implements Toolbar.OnMenuItemClickListener {
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_GALLERY_CAPTURE = 2;
+
     private DatabaseReference mPicsRef;
     private OnLogoutListener mListener;
+    private OnIntentsListener mIntentsListener;
     private FirebaseAuth mAuth;
     private String mUid;
 
@@ -66,16 +72,15 @@ public class LandingFragment extends Fragment
                 mListener.onLogout();
                 return true;
             case R.id.action_take_image:
-                //TODO: Launch camera Intent
-                //TODO: get tags based on taken photo
+                mIntentsListener.takePhotoIntent();
                 return true;
             case R.id.action_photo_gallery:
-                //TODO: Launch gallery intent
-                //TODO: get tags based on photos
+                mIntentsListener.getGalleryPicsIntent();
                 return true;
         }
         return false;
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -87,12 +92,24 @@ public class LandingFragment extends Fragment
             throw new ClassCastException(context.toString()
                     + " must implement OnLogoutListener");
         }
+
+        try {
+            mIntentsListener = (OnIntentsListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "must implement OnIntentsListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mIntentsListener = null;
+    }
+
+    public interface OnIntentsListener {
+        void takePhotoIntent();
+        void getGalleryPicsIntent();
     }
 
     public interface OnLogoutListener {
