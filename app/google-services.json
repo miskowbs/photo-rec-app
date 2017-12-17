@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "988908571258-75j4o0aso0vprhkurskvo0dnekccb89d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.rose_hulman.miskowbs.photorecommendationapp",
+            "certificate_hash": "df05bccab833f6af5b8def906414493db1276342"
+          }
+        },
+        {
+          "client_id": "988908571258-heep06f2ehahhooa06i33h77s4eush6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.rose_hulman.miskowbs.photorecommendationapp",
+            "certificate_hash": "d3a6b83b5cebc373ccbe78fd90775f0dee02a4d2"
+          }
+        },
+        {
           "client_id": "988908571258-1rm9pbv9ak1e08kesu0ii0gprt8qgc4o.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988908571258-1rm9pbv9ak1e08kesu0ii0gprt8qgc4o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

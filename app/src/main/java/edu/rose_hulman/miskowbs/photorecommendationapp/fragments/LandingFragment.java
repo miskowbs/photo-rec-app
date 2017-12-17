@@ -27,8 +27,8 @@ import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 public class LandingFragment extends Fragment
         implements Toolbar.OnMenuItemClickListener {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_GALLERY_CAPTURE = 2;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_GALLERY_CAPTURE = 3;
 
     private DatabaseReference mPicsRef;
     private OnLogoutListener mListener;
@@ -45,6 +45,22 @@ public class LandingFragment extends Fragment
         super.onCreate(savedInstanceState);
         mPicsRef = FirebaseDatabase.getInstance().getReference().child("users");
         //Note path isn't finalized yet
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_IMAGE_CAPTURE:
+                Log.d("PIC", "In LandingFragment onActivityResult");
+                //TODO: LandingFragment Redo based on Image tags
+                break;
+            case REQUEST_GALLERY_CAPTURE:
+
+                //TODO: LandingFragment Redo based on Image tags
+                break;
+        }
     }
 
     @Override

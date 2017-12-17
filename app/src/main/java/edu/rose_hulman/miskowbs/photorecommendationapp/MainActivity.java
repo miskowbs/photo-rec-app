@@ -1,10 +1,17 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,8 +29,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LandingFragment;
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LoginFragment;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.OnLoginListener, GoogleApiClient.OnConnectionFailedListener,
@@ -32,11 +47,13 @@ public class MainActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_GALLERY_CAPTURE = 3;
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 4;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private OnCompleteListener mOnCompleteListener;
     private GoogleApiClient mGoogleApiClient;
+    private String mPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,11 +130,40 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
             case REQUEST_IMAGE_CAPTURE:
-                //TODO: LandingFragment Redo based on Image tags
+                galleryAddPic();
+                Log.d("PIC", "In MainActivity onActivityresult");
                 break;
             case REQUEST_GALLERY_CAPTURE:
-                //TODO: LandingFragment Redo based on Image tags
                 break;
+        }
+    }
+
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        mPhotoPath = image.getAbsolutePath();
+        return image;
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (!(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    showError("Permissions Error",
+                            "Write access is required in order " +
+                                    "for this app to function properly");
+                }
+                return;
+            }
         }
     }
 
@@ -133,6 +179,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck == getPackageManager().PERMISSION_DENIED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_WRITE_STORAGE);
+            }
+        }
+
         mAuth.addAuthStateListener(mAuthStateListener);
     }
 
@@ -155,6 +214,15 @@ public class MainActivity extends AppCompatActivity implements
         loginFragment.onLoginError(message);
     }
 
+    private void showError(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+                .show();
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         showLoginError("Google connection failed!");
@@ -169,8 +237,29 @@ public class MainActivity extends AppCompatActivity implements
     public void takePhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            File photo = null;
+            try {
+                photo = createImageFile();
+            } catch (IOException e) {
+                showError("File system error!",
+                        "There was an error with creating the image file!");
+                Log.d("FS", e.getMessage());
+            }
+            if(photo != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "edu.rose_hulman.miskowbs.fileprovider", photo);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     @Override
