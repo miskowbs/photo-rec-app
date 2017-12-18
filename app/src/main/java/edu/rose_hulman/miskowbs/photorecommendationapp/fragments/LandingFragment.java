@@ -2,6 +2,8 @@ package edu.rose_hulman.miskowbs.photorecommendationapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -17,6 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.Collection;
+
 import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 
 
@@ -27,14 +33,12 @@ import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 public class LandingFragment extends Fragment
         implements Toolbar.OnMenuItemClickListener {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 2;
-    private static final int REQUEST_GALLERY_CAPTURE = 3;
-
     private DatabaseReference mPicsRef;
     private OnLogoutListener mListener;
     private OnIntentsListener mIntentsListener;
     private FirebaseAuth mAuth;
     private String mUid;
+    private Collection<Bitmap> mCurrentImages;
 
     public  LandingFragment() {
         //Required empty constructor
@@ -45,22 +49,6 @@ public class LandingFragment extends Fragment
         super.onCreate(savedInstanceState);
         mPicsRef = FirebaseDatabase.getInstance().getReference().child("users");
         //Note path isn't finalized yet
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
-                Log.d("PIC", "In LandingFragment onActivityResult");
-                //TODO: LandingFragment Redo based on Image tags
-                break;
-            case REQUEST_GALLERY_CAPTURE:
-
-                //TODO: LandingFragment Redo based on Image tags
-                break;
-        }
     }
 
     @Override
@@ -88,10 +76,15 @@ public class LandingFragment extends Fragment
                 mListener.onLogout();
                 return true;
             case R.id.action_take_image:
-                mIntentsListener.takePhotoIntent();
+                String imagePath = mIntentsListener.takePhotoIntent();
+                Bitmap image = BitmapFactory.decodeFile(imagePath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] data = baos.toByteArray();
+
                 return true;
             case R.id.action_photo_gallery:
-                mIntentsListener.getGalleryPicsIntent();
+                Collection<String> imagePaths = mIntentsListener.getGalleryPicsIntent();
                 return true;
         }
         return false;
@@ -124,8 +117,8 @@ public class LandingFragment extends Fragment
     }
 
     public interface OnIntentsListener {
-        void takePhotoIntent();
-        void getGalleryPicsIntent();
+        String takePhotoIntent();
+        Collection<String> getGalleryPicsIntent();
     }
 
     public interface OnLogoutListener {

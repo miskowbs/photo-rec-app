@@ -32,6 +32,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LandingFragment;
@@ -234,10 +235,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void takePhotoIntent() {
+    public String takePhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = null;
         if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photo = null;
             try {
                 photo = createImageFile();
             } catch (IOException e) {
@@ -252,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
+        return (photo != null) ? photo.getPath() : "";
     }
 
     private void galleryAddPic() {
@@ -263,12 +265,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void getGalleryPicsIntent() {
+    public Collection<String> getGalleryPicsIntent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
         galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Pictures"),
                 REQUEST_GALLERY_CAPTURE);
+
+        //TODO: Return a collection of files
+        return null;
     }
 }
