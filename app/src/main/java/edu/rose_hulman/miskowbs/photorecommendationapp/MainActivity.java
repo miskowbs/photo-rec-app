@@ -3,6 +3,8 @@ package edu.rose_hulman.miskowbs.photorecommendationapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -28,12 +30,18 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LandingFragment;
 import edu.rose_hulman.miskowbs.photorecommendationapp.fragments.LoginFragment;
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseStorage mStorage = FirebaseStorage.getInstance();
     private OnCompleteListener mOnCompleteListener;
     private GoogleApiClient mGoogleApiClient;
     private String mPhotoPath;
@@ -133,6 +142,19 @@ public class MainActivity extends AppCompatActivity implements
             case REQUEST_IMAGE_CAPTURE:
                 galleryAddPic();
                 Log.d("PIC", "In MainActivity onActivityresult");
+
+                Bitmap image = BitmapFactory.decodeFile(mPhotoPath);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] bytes = baos.toByteArray();
+                String path = "images/" + UUID.randomUUID()+ ".png";
+                StorageReference imagesRef = mStorage.getReference(path);
+
+                StorageMetadata metadata = new StorageMetadata.Builder()
+                        .setCustomMetadata("originalLocalFilepath", mPhotoPath)
+                        .build();
+
+                UploadTask uploadTask = imagesRef.putBytes(bytes, metadata);
                 break;
             case REQUEST_GALLERY_CAPTURE:
                 break;

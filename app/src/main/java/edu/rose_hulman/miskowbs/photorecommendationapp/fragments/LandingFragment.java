@@ -18,10 +18,15 @@ import android.view.ViewGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Collection;
+import java.util.UUID;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.R;
 
@@ -77,11 +82,6 @@ public class LandingFragment extends Fragment
                 return true;
             case R.id.action_take_image:
                 String imagePath = mIntentsListener.takePhotoIntent();
-                Bitmap image = BitmapFactory.decodeFile(imagePath);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                byte[] data = baos.toByteArray();
-
                 return true;
             case R.id.action_photo_gallery:
                 Collection<String> imagePaths = mIntentsListener.getGalleryPicsIntent();
