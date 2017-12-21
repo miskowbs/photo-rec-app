@@ -25,11 +25,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 4;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference mSearchesRef;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
     private OnCompleteListener mOnCompleteListener;
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        mSearchesRef = FirebaseDatabase.getInstance().getReference().child("searches");
         initializeListeners();
         initializeGoogle();
     }
@@ -152,9 +157,19 @@ public class MainActivity extends AppCompatActivity implements
 
                 StorageMetadata metadata = new StorageMetadata.Builder()
                         .setCustomMetadata("originalLocalFilepath", mPhotoPath)
+                        .setCustomMetadata("user", mAuth.getCurrentUser().getUid())
                         .build();
 
                 UploadTask uploadTask = imagesRef.putBytes(bytes, metadata);
+                uploadTask.addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri url = taskSnapshot.getDownloadUrl();
+                        DatabaseReference newSearchRef = mSearchesRef.push();
+                        newSearchRef.child("uid").setValue(mAuth.getCurrentUser().getUid());
+                        newSearchRef.child("url").setValue(taskSnapshot.getDownloadUrl().toString());
+                    }
+                });
                 break;
             case REQUEST_GALLERY_CAPTURE:
                 break;
