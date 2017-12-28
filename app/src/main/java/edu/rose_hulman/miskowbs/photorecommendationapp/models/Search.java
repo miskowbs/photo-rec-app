@@ -1,5 +1,7 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
  * Created by miskowbs on 12/27/2017.
  */
 
-public class Search {
+public class Search implements Parcelable{
     private String url;
     private HashMap<String, String> tags;
     private String key;
@@ -68,5 +70,16 @@ public class Search {
     public void setValues(Search s) {
         this.url = s.url;
         this.tags = s.tags;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(url);
+        parcel.writeMap(tags);
     }
 }

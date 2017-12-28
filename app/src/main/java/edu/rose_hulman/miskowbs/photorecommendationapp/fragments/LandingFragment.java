@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -143,7 +144,10 @@ public class LandingFragment extends Fragment
 
     @Override
     public void onViewImg(Search search) {
-        //TODO: Show the image
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment, ImageFragment.getInstance(search));
+        ft.addToBackStack("picture");
+        ft.commit();
     }
 
     @Override
