@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public String takePhotoIntent() {
+    public void takePhotoIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photo = null;
         if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -283,14 +283,13 @@ public class MainActivity extends AppCompatActivity implements
                         "There was an error with creating the image file!");
                 Log.d("FS", e.getMessage());
             }
-            if(photo != null) {
+            if (photo != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "edu.rose_hulman.miskowbs.fileprovider", photo);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
-        return (photo != null) ? photo.getPath() : "";
     }
 
     private void galleryAddPic() {
@@ -302,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Collection<String> getGalleryPicsIntent() {
+    public void getGalleryPicsIntent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
         galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -311,6 +310,5 @@ public class MainActivity extends AppCompatActivity implements
                 REQUEST_GALLERY_CAPTURE);
 
         //TODO: Return a collection of files
-        return null;
     }
 }

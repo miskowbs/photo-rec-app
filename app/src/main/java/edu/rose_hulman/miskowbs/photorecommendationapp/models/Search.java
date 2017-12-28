@@ -1,5 +1,9 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp.models;
 
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -7,32 +11,62 @@ import java.util.List;
  */
 
 public class Search {
-    private String imageUrl;
-    private List<String> tags;
+    private String url;
+    private HashMap<String, String> tags;
+    private String key;
 
-    public Search(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public Search() {
+        //Required empty constructor
     }
 
-    public Search(String imageUrl, List<String> tags) {
+    public Search(String url) {
+        this.url = url;
+    }
 
-        this.imageUrl = imageUrl;
+    public Search(String url, HashMap<String, String> tags) {
+
+        this.url = url;
         this.tags = tags;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public List<String> getTags() {
+    public HashMap<String, String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public List<String> getTagsAsList() {
+        ArrayList<String> tagList = new ArrayList<>();
+        try {
+            for (String t : this.tags.values()) {
+                tagList.add(t);
+            }
+        } catch (NullPointerException e) {
+            Log.e("TAG", e.getMessage());
+        }
+        return tagList;
+    }
+
+    public void setTags(HashMap<String, String> tags) {
         this.tags = tags;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setValues(Search s) {
+        this.url = s.url;
+        this.tags = s.tags;
     }
 }

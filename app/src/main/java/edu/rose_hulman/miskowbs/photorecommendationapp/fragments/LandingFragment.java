@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +32,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.R;
+import edu.rose_hulman.miskowbs.photorecommendationapp.adapters.SearchAdapter;
+import edu.rose_hulman.miskowbs.photorecommendationapp.models.Search;
 
 
 /**
@@ -36,14 +41,14 @@ import edu.rose_hulman.miskowbs.photorecommendationapp.R;
  */
 
 public class LandingFragment extends Fragment
-        implements Toolbar.OnMenuItemClickListener {
+        implements Toolbar.OnMenuItemClickListener, SearchAdapter.Callback {
 
-    private DatabaseReference mPicsRef;
+    private DatabaseReference mSearchesRef;
     private OnLogoutListener mListener;
     private OnIntentsListener mIntentsListener;
+    private SearchAdapter mAdapter;
     private FirebaseAuth mAuth;
     private String mUid;
-    private Collection<Bitmap> mCurrentImages;
 
     public  LandingFragment() {
         //Required empty constructor
@@ -52,7 +57,7 @@ public class LandingFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPicsRef = FirebaseDatabase.getInstance().getReference().child("users");
+        mSearchesRef = FirebaseDatabase.getInstance().getReference().child("searches");
         //Note path isn't finalized yet
     }
 
@@ -67,8 +72,11 @@ public class LandingFragment extends Fragment
         mAuth = FirebaseAuth.getInstance();
         mUid = mAuth.getCurrentUser().getUid();
 
-        //TODO: add adapter here?
-
+        mAdapter = new SearchAdapter(this, mSearchesRef);
+        RecyclerView searchList = rootView.findViewById(R.id.searches_list);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        searchList.setLayoutManager(manager);
+        searchList.setAdapter(mAdapter);
         return rootView;
     }
 
@@ -81,10 +89,10 @@ public class LandingFragment extends Fragment
                 mListener.onLogout();
                 return true;
             case R.id.action_take_image:
-                String imagePath = mIntentsListener.takePhotoIntent();
+                mIntentsListener.takePhotoIntent();
                 return true;
             case R.id.action_photo_gallery:
-                Collection<String> imagePaths = mIntentsListener.getGalleryPicsIntent();
+                mIntentsListener.getGalleryPicsIntent();
                 return true;
         }
         return false;
@@ -101,11 +109,11 @@ public class LandingFragment extends Fragment
             throw new ClassCastException(context.toString()
                     + " must implement OnLogoutListener");
         }
-
         try {
             mIntentsListener = (OnIntentsListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + "must implement OnIntentsListener");
+            throw new ClassCastException(context.toString()
+                    + " must implement OnIntentsListener");
         }
     }
 
@@ -116,9 +124,36 @@ public class LandingFragment extends Fragment
         mIntentsListener = null;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSearchesRef.removeEventListener(mAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        attachSearchList();
+    }
+
+    private void attachSearchList() {
+        mAdapter.clear();
+        mSearchesRef.addChildEventListener(mAdapter);
+    }
+
+    @Override
+    public void onViewImg(Search search) {
+        //TODO: Show the image
+    }
+
+    @Override
+    public void onShowResults(Search search) {
+        //TODO: Image search intent using the tags in the search
+    }
+
     public interface OnIntentsListener {
-        String takePhotoIntent();
-        Collection<String> getGalleryPicsIntent();
+        void takePhotoIntent();
+        void getGalleryPicsIntent();
     }
 
     public interface OnLogoutListener {
