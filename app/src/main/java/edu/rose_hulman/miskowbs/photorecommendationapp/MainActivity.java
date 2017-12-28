@@ -308,7 +308,5 @@ public class MainActivity extends AppCompatActivity implements
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Pictures"),
                 REQUEST_GALLERY_CAPTURE);
-
-        //TODO: Return a collection of files
     }
 }

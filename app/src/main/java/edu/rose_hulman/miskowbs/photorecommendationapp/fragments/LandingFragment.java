@@ -1,5 +1,6 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp.fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -153,6 +154,18 @@ public class LandingFragment extends Fragment
     @Override
     public void onShowResults(Search search) {
         //TODO: Image search intent using the tags in the search
+
+        StringBuilder sb = new StringBuilder();
+        for(String s : search.getTagsAsList()) {
+            sb.append(s + " ");
+        }
+
+        Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+        intent.putExtra(SearchManager.QUERY, sb.toString());
+
+        if(intent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     public interface OnIntentsListener {
