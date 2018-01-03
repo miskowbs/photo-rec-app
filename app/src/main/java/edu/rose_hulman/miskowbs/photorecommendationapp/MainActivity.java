@@ -150,9 +150,9 @@ public class MainActivity extends AppCompatActivity implements
 
                 Bitmap image = BitmapFactory.decodeFile(mPhotoPath);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                image.compress(Bitmap.CompressFormat.JPEG, 10, baos);
                 byte[] bytes = baos.toByteArray();
-                String path = "images/" + UUID.randomUUID()+ ".png";
+                String path = "images/" + UUID.randomUUID()+ ".jpg";
                 StorageReference imagesRef = mStorage.getReference(path);
 
                 StorageMetadata metadata = new StorageMetadata.Builder()
