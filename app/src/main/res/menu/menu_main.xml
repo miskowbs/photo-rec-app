@@ -6,11 +6,11 @@
         android:icon="@drawable/ic_camera_alt_black_24dp"
         android:orderInCategory="100"
         app:showAsAction="always" />
-    <item android:id="@+id/action_photo_gallery"
-        android:title="@string/action_photo_gallery"
-        android:icon="@drawable/ic_photo_library_black_24dp"
-        android:orderInCategory="100"
-        app:showAsAction="always" />
+    <!--<item android:id="@+id/action_photo_gallery"-->
+        <!--android:title="@string/action_photo_gallery"-->
+        <!--android:icon="@drawable/ic_photo_library_black_24dp"-->
+        <!--android:orderInCategory="100"-->
+        <!--app:showAsAction="always" />-->
     <item android:id="@+id/action_logout"
         android:title="@string/action_logout"
         android:orderInCategory="100"
