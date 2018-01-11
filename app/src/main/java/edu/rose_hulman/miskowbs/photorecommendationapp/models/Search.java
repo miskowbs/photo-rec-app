@@ -16,6 +16,7 @@ public class Search implements Parcelable{
     private String url;
     private HashMap<String, String> tags;
     private String key;
+    private String uid;
 
     public Search() {
         //Required empty constructor
@@ -70,6 +71,14 @@ public class Search implements Parcelable{
     public void setValues(Search s) {
         this.url = s.url;
         this.tags = s.tags;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     @Override

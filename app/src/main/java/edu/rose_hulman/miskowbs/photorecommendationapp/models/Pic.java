@@ -11,6 +11,10 @@ public class Pic {
     private Search search;
     private Bitmap bitmap;
 
+    public Pic() {
+
+    }
+
     public Search getSearch() {
         return search;
     }

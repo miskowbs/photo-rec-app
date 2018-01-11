@@ -55,16 +55,6 @@ public class ImageFragment extends Fragment implements GetImageTask.ImageConsume
         mImageView = view.findViewById(R.id.image_view);
         mImageView.setImageBitmap(mPic.getBitmap());
 
-        TextView tagsView = view.findViewById(R.id.tags_view);
-        StringBuilder sb = new StringBuilder();
-        for(String s : mPic.getSearch().getTagsAsList()) {
-            sb.append(s + ", ");
-        }
-        if(sb.length() > 2) {
-            sb.delete(sb.length() - 2, sb.length());
-        }
-        tagsView.setText(sb.toString());
-
         return view;
     }
 

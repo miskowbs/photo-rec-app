@@ -1,10 +1,12 @@
 package edu.rose_hulman.miskowbs.photorecommendationapp.adapters;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -16,21 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.rose_hulman.miskowbs.photorecommendationapp.R;
+import edu.rose_hulman.miskowbs.photorecommendationapp.models.BitmapAndPosition;
+import edu.rose_hulman.miskowbs.photorecommendationapp.models.Pic;
 import edu.rose_hulman.miskowbs.photorecommendationapp.models.Search;
+import edu.rose_hulman.miskowbs.photorecommendationapp.tasks.GetImageAndPositionTask;
 
 /**
  * Created by miskowbs on 12/27/2017.
  */
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> implements ChildEventListener{
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> implements ChildEventListener, GetImageAndPositionTask.ImageConsumer{
 
-    private List<Search> mSearches;
     private Callback mCallback;
     private DatabaseReference mSearchesRef;
+    private List<Pic> mPics;
 
     public SearchAdapter(Callback cb, DatabaseReference firebaseRef) {
         mCallback = cb;
-        mSearches = new ArrayList<>();
+        mPics = new ArrayList<>();
         mSearchesRef = firebaseRef;
     }
 
@@ -42,11 +47,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(SearchAdapter.ViewHolder holder, int position) {
-        final Search search = mSearches.get(position);
-        holder.mUrlView.setText(search.getKey());
+        final Pic pic = mPics.get(position);
+        holder.mUrlView.setImageBitmap(pic.getBitmap());
 
         StringBuilder tagsTextBuilder = new StringBuilder();
-        for(String s : search.getTagsAsList()) {
+        for(String s : pic.getSearch().getTagsAsList()) {
             tagsTextBuilder.append(s + ", ");
         }
 
@@ -59,31 +64,35 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onViewImg(search);
+                mCallback.onViewImg(pic.getSearch());
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                mCallback.onShowResults(search);
+                mCallback.onShowResults(pic.getSearch());
                 return false;
             }
         });
     }
 
     public void clear() {
-        mSearches.clear();
+        mPics.clear();
     }
 
     public int getItemCount() {
-        return mSearches.size();
+        return mPics.size();
     }
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         Search search = dataSnapshot.getValue(Search.class);
         search.setKey(dataSnapshot.getKey());
-        mSearches.add(0, search);
+        Pic newPic = new Pic();
+        newPic.setSearch(search);
+        newPic.setBitmap(Bitmap.createBitmap(92, 92, Bitmap.Config.ARGB_8888));
+        mPics.add(newPic);
+        new GetImageAndPositionTask(this, mPics.size() - 1).execute(newPic.getSearch().getUrl());
         notifyDataSetChanged();
 
     }
@@ -92,7 +101,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
         String key = dataSnapshot.getKey();
         Search updatedSearch = dataSnapshot.getValue(Search.class);
-        for(Search search : mSearches) {
+        for(int i = 0; i < mPics.size(); i++) {
+            Search search = mPics.get(i).getSearch();
             if(search.getKey().equals(key)) {
                 search.setValues(updatedSearch);
                 notifyDataSetChanged();
@@ -103,9 +113,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onChildRemoved(DataSnapshot dataSnapshot) {
         String key = dataSnapshot.getKey();
-        for(Search s : mSearches) {
+        for(int i = 0; i < mPics.size(); i++) {
+            Search s = mPics.get(i).getSearch();
             if(s.getKey().equals(key)) {
-                mSearches.remove(s);
+                mPics.remove(i);
                 notifyDataSetChanged();
                 return;
             }
@@ -122,18 +133,25 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         Log.e("TAG", "Database Error" + databaseError);
     }
 
+    @Override
+    public void onImageLoaded(BitmapAndPosition bitmap) {
+        Log.d("IMAGE", "Image presented");
+        mPics.get(bitmap.getPosition()).setBitmap(bitmap.getBitmap());
+        notifyDataSetChanged();
+    }
+
     public interface Callback {
         public void onViewImg(Search search);
 
         public void onShowResults(Search search);
     }
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mUrlView;
+        private ImageView mUrlView;
         private TextView mTagsView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mUrlView = (TextView) itemView.findViewById(R.id.search_text);
+            mUrlView = (ImageView) itemView.findViewById(R.id.thumbnail_view);
             mTagsView = (TextView) itemView.findViewById(R.id.tags_text);
         }
     }

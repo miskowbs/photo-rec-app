@@ -93,9 +93,9 @@ public class LandingFragment extends Fragment
             case R.id.action_take_image:
                 mIntentsListener.takePhotoIntent();
                 return true;
-            case R.id.action_photo_gallery:
+            /*case R.id.action_photo_gallery:
                 mIntentsListener.getGalleryPicsIntent();
-                return true;
+                return true;*/
         }
         return false;
     }

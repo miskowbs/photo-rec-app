@@ -10,9 +10,4 @@
         android:layout_height="wrap_content"
         android:scaleType="centerInside"/>
 
-    <TextView
-        android:id="@+id/tags_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </LinearLayout>
