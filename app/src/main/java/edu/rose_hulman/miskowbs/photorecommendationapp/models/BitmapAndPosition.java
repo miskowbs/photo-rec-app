@@ -24,3 +24,4 @@ public class BitmapAndPosition {
         return position;
     }
 }
+

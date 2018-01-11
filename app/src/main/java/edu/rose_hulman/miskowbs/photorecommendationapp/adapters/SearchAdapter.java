@@ -60,6 +60,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             tagsTextBuilder.delete(length - 2, length);
         }
 
+
+
         holder.mTagsView.setText(tagsTextBuilder.toString());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,8 +95,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         newPic.setBitmap(Bitmap.createBitmap(92, 92, Bitmap.Config.ARGB_8888));
         mPics.add(newPic);
         new GetImageAndPositionTask(this, mPics.size() - 1).execute(newPic.getSearch().getUrl());
-        notifyDataSetChanged();
 
+        notifyDataSetChanged();
     }
 
     @Override

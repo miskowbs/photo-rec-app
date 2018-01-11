@@ -2,7 +2,6 @@ package edu.rose_hulman.miskowbs.photorecommendationapp.tasks;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -57,3 +56,4 @@ public class GetImageAndPositionTask extends AsyncTask<String, Void, BitmapAndPo
         void onImageLoaded(BitmapAndPosition bitmap);
     }
 }
+
